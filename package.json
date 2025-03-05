@@ -1,0 +1,38 @@
+{
+  "name": "nomo-button-webon",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
+    "preview": "vite preview",
+    "bump": "nomo-webon-cli bumpVersion ./public/nomo_manifest.json",
+    "deploy": "npm run bump && npm run build && nomo-webon-cli deploy dist production",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "@tailwindcss/vite": "^4.0.9",
+    "ethersjs-nomo-webons": "^0.2.5",
+    "nomo-webon-cli": "^0.2.1",
+    "nomo-webon-kit": "^0.1.39",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.2.0",
+    "tailwindcss": "^4.0.9"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.21.0",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
+    "@vitejs/plugin-react": "^4.3.4",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.21.0",
+    "eslint-plugin-react-hooks": "^5.1.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^15.15.0",
+    "prettier": "^3.5.2",
+    "vite": "^6.2.0"
+  }
+}
