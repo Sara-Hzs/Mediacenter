@@ -2,9 +2,9 @@ const nomoCliConfig = {
   deployTargets: {
     production: {
       rawSSH: {
-        sshHost: 'root@0.0.0.0',
+        sshHost: 'root@157.180.29.50',
         sshBaseDir: '/var/www/html/',
-        publicBaseUrl: 'https://button.nomo.me',
+        publicBaseUrl: 'https://mediacenter.nomo.zone',
       },
     },
   },
