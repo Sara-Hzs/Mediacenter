@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import logo from '../assets/logo.png'
+import LanguageSelector from './LanguageSelector'
 
-function Header() {
+function Header({ selectedLanguage, availableLanguages, onLanguageChange }) {
   const [scrolled, setScrolled] = useState(false)
 
   useEffect(() => {
@@ -31,10 +32,15 @@ function Header() {
             alt="Media Center Logo"
             className="h-10 mr-3"
           />
-          <h1 className="text-xl font-semibold text-amber-500">
+          <h1 className="text-xl font-semibold text-nomo-500">
             Media Center
           </h1>
         </div>
+        <LanguageSelector
+          selectedLanguage={selectedLanguage}
+          availableLanguages={availableLanguages}
+          onLanguageChange={onLanguageChange}
+        />
       </div>
     </header>
   )

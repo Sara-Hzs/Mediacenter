@@ -1,0 +1,26 @@
+{
+  "categories": [
+    {
+      "id": "VOO",
+      "name": "VOO",
+      "icon": "icons/voo.svg",
+      "description": "VOO project documents and resources"
+    },
+    {
+      "id": "KMINTINGS",
+      "name": "KMINTINGS",
+      "icon": "icons/kmintings.svg"
+    },
+    {
+      "id": "DPT",
+      "name": "Desert Pearl Token",
+      "icon": "icons/dpt.png",
+      "description": "Desert Pearl related information"
+    },
+    {
+      "id": "NOMO",
+      "name": "NOMO",
+      "icon": "icons/nomo.png"
+    }
+  ]
+}

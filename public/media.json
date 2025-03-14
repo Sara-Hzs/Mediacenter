@@ -1,76 +1,52 @@
 {
-  "categories": [
+  "files": [
     {
-      "id": "movies",
-      "name": "VOO",
-      "description": "A collection of my favorite movies from various genres",
-      "bannerImage": "banners/movies-banner.jpg",
-      "files": [
-        {
-          "id": "movie1",
-          "name": "Big Buck Bunny",
-          "description": "An open-source animated short film",
-          "path": "movies/big-buck-bunny.mp4",
-          "type": "video"
-        },
-        {
-          "id": "movie2",
-          "name": "Sintel",
-          "description": "Another great open-source film",
-          "path": "movies/sintel.mp4",
-          "type": "video"
-        },
-        {
-          "id": "doc1",
-          "name": "User Manual",
-          "description": "How to use the application",
-          "path": "documents/user-manual.pdf",
-          "type": "pdf"
-        }
+      "hash": "be8a7ec013c08bfe0f9cd594914fb83093f16f24e8967f9ae58cb4e300ba80d3",
+      "fullFileName": "en_Instructions Nomo Voo.one ENG.pdf",
+      "languageCode": "en",
+      "folderLocation": [
+        "VOO",
+        "VOO",
+        "Instructions / Guides"
       ]
     },
     {
-      "id": "documents",
-      "name": "KMINTINGS",
-      "description": "Important documents and references",
-      "bannerImage": "banners/documents-banner.jpg",
-      "files": [
-        {
-          "id": "doc1",
-          "name": "User Manual",
-          "description": "How to use the application",
-          "path": "documents/user-manual.pdf",
-          "type": "pdf"
-        },
-        {
-          "id": "doc2",
-          "name": "Terms of Service",
-          "description": "Legal information about usage",
-          "path": "documents/terms.pdf",
-          "type": "pdf"
-        }
+      "hash": "7c28b9d9f77fb77dda562ce90c4a3f0e4bca9e6b1e98fc4e9e5c0fc9e2b1b2a3",
+      "fullFileName": "de_Anleitung Nomo Voo.one DE.pdf",
+      "languageCode": "de",
+      "folderLocation": [
+        "VOO",
+        "VOO",
+        "Instructions / Guides"
       ]
     },
     {
-      "id": "photos",
-      "name": "NOMO",
-      "description": null,
-      "bannerImage": "banners/documents-banner.jpg",
-      "files": [
-        {
-          "id": "photo1",
-          "name": "Landscape",
-          "description": "Beautiful mountain landscape",
-          "path": "photos/landscape.jpg",
-          "type": "image"
-        },
-        {
-          "id": "photo2",
-          "name": "Beach Sunset",
-          "description": "Sunset over the ocean",
-          "path": "photos/sunset.jpg",
-          "type": "image"
-        }
+      "hash": "9f7d5f3e2b1a8c6d4e3f2a1b8c7d6e5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9",
+      "fullFileName": "en_Whitepaper VOO.pdf",
+      "languageCode": "en",
+      "folderLocation": [
+        "VOO",
+        "VOO",
+        "Whitepaper"
+      ]
+    },
+    {
+      "hash": "1a2b3c4d5e6f7g8h9i0j1k2l3m4n5o6p7q8r9s0t1u2v3w4x5y6z7a8b9c0d1e",
+      "fullFileName": "es_Documento Técnico VOO.pdf",
+      "languageCode": "es",
+      "folderLocation": [
+        "VOO",
+        "VOO",
+        "Whitepaper"
+      ]
+    },
+    {
+      "hash": "5f4e3d2c1b0a9f8e7d6c5b4a3f2e1d0c9b8a7f6e5d4c3b2a1f9e8d7c6b5a4f3",
+      "fullFileName": "en_KMINTINGS Introduction.pdf",
+      "languageCode": "en",
+      "folderLocation": [
+        "KMINTINGS",
+        "Introduction"
       ]
     }
   ]

@@ -3,7 +3,14 @@ import { nomoFallbackQRCode } from "nomo-webon-kit"
 import Header from '../components/Header'
 import Category from '../components/Category'
 
-function Home({ mediaData, loading, error }) {
+function Home({
+                mediaData,
+                loading,
+                error,
+                selectedLanguage,
+                availableLanguages,
+                onLanguageChange
+              }) {
   useEffect(() => {
     // nomoFallbackQRCode()
   }, [])
@@ -12,7 +19,7 @@ function Home({ mediaData, loading, error }) {
     if (loading) {
       return (
         <div className="flex justify-center items-center min-h-[60vh]">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-amber-500"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-nomo-500"></div>
         </div>
       )
     }
@@ -32,7 +39,7 @@ function Home({ mediaData, loading, error }) {
     if (!mediaData || !mediaData.categories || mediaData.categories.length === 0) {
       return (
         <div className="bg-neutral-800 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-amber-500 mb-2">No Media Found</h2>
+          <h2 className="text-xl font-bold text-nomo-500 mb-2">No Media Found</h2>
           <p className="text-neutral-300">
             No media categories were found. Add some categories to your media.json file.
           </p>
@@ -46,6 +53,7 @@ function Home({ mediaData, loading, error }) {
           <Category
             key={category.id}
             category={category}
+            selectedLanguage={selectedLanguage}
           />
         ))}
       </>
@@ -53,8 +61,12 @@ function Home({ mediaData, loading, error }) {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-white">
-      <Header />
+    <div className="min-h-screen bg- text-white">
+      <Header
+        selectedLanguage={selectedLanguage}
+        availableLanguages={availableLanguages}
+        onLanguageChange={onLanguageChange}
+      />
 
       <main className="container mx-auto px-4 pt-24 pb-12">
         {renderContent()}
