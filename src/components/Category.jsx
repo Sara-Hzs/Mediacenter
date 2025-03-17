@@ -8,46 +8,47 @@ function Category({ category, selectedLanguage }) {
     setIsExpanded(!isExpanded)
   }
 
-  // Filter files based on selected language, fallback to English if not available
-  const getLanguageFilteredFiles = () => {
-    if (!category.files || !Array.isArray(category.files)) return []
+  // Filter files based on selected language
+  const getLanguageFilteredFiles = (filesList) => {
+    if (!filesList || !Array.isArray(filesList)) return []
 
-    // Group files by their name (without language prefix)
-    const fileGroups = {}
-
-    category.files.forEach(file => {
-      // Get a unique key for the file based on its hash
-      const fileKey = file.hash
-
-      if (!fileGroups[fileKey]) {
-        fileGroups[fileKey] = []
-      }
-
-      fileGroups[fileKey].push(file)
-    })
-
-    // For each group, select the file in the preferred language or fallback to English
-    const selectedFiles = []
-
-    Object.values(fileGroups).forEach(group => {
-      // Try to find file in selected language
-      const preferredFile = group.find(file => file.languageCode === selectedLanguage)
-
-      // If not found, try English as fallback
-      const englishFile = group.find(file => file.languageCode === 'en')
-
-      // If neither found, use the first file in the group
-      const fileToUse = preferredFile || englishFile || group[0]
-
-      if (fileToUse) {
-        selectedFiles.push(fileToUse)
-      }
-    })
-
-    return selectedFiles
+    // Just filter by the selected language - show only files with matching languageCode
+    return filesList.filter(file => file.languageCode === selectedLanguage);
   }
 
-  const filteredFiles = getLanguageFilteredFiles()
+  // Filter and process all subfolders recursively
+  const processSubfolders = (subfolders) => {
+    if (!subfolders || !Array.isArray(subfolders)) return []
+
+    return subfolders.map(subfolder => {
+      const processedSubfolders = processSubfolders(subfolder.subfolders)
+      const filteredFiles = getLanguageFilteredFiles(subfolder.files)
+
+      return {
+        ...subfolder,
+        subfolders: processedSubfolders,
+        filteredFiles: filteredFiles
+      }
+    })
+  }
+
+  const categoryFiles = getLanguageFilteredFiles(category.files)
+  const processedSubfolders = processSubfolders(category.subfolders)
+
+  // Recursively count files in all subfolders
+  const countTotalFiles = (subfolder) => {
+    if (!subfolder) return 0
+
+    const filesInCurrentFolder = subfolder.filteredFiles ? subfolder.filteredFiles.length : 0
+    const filesInSubfolders = subfolder.subfolders ?
+      subfolder.subfolders.reduce((total, sub) => total + countTotalFiles(sub), 0) : 0
+
+    return filesInCurrentFolder + filesInSubfolders
+  }
+
+  // Calculate total files in all subfolders
+  const totalFileCount = categoryFiles.length +
+    processedSubfolders.reduce((total, subfolder) => total + countTotalFiles(subfolder), 0)
 
   // Get icon based on category
   const getCategoryIcon = () => {
@@ -69,8 +70,58 @@ function Category({ category, selectedLanguage }) {
     )
   }
 
+  const renderFilesGrid = (files) => {
+    if (!files || files.length === 0) return null;
+
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {files.map(file => (
+          <MediaFile key={file.hash} file={file} />
+        ))}
+      </div>
+    );
+  }
+
+  // Recursive component to render subfolders at any level
+  const RenderSubfolders = ({ subfolders, level = 0 }) => {
+    if (!subfolders || subfolders.length === 0) return null;
+
+    return (
+      <div className="space-y-8">
+        {subfolders.map(subfolder => (
+          <div key={subfolder.id} className="subfolder">
+            {/* Subfolder header with appropriate size based on level */}
+            <div className={`mb-4 border-l-${4-Math.min(level, 3)} border-nomo-${500-level*100} pl-3`}>
+              <h3 className={`text-white ${level === 0 ? 'text-lg' : 'text-md'} font-medium`}>
+                {subfolder.name}
+              </h3>
+            </div>
+
+            {/* Files in this subfolder */}
+            <div>
+              {subfolder.filteredFiles && subfolder.filteredFiles.length > 0 ? (
+                renderFilesGrid(subfolder.filteredFiles)
+              ) : (
+                subfolder.subfolders && subfolder.subfolders.length === 0 && (
+                  <p className="text-center text-neutral-300 py-2">No files available in the selected language.</p>
+                )
+              )}
+
+              {/* Render any deeper level subfolders */}
+              {subfolder.subfolders && subfolder.subfolders.length > 0 && (
+                <div className="mt-6">
+                  <RenderSubfolders subfolders={subfolder.subfolders} level={level + 1} />
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
-    <div className="mb-8 bg-neutral-800 rounded-lg overflow-hidden shadow-lg">
+    <div className="mb-8 bg-neutral-800 overflow-hidden shadow-lg">
       {/* Category Header */}
       <div
         className="relative p-4 cursor-pointer"
@@ -86,14 +137,9 @@ function Category({ category, selectedLanguage }) {
             {category.name}
           </h2>
 
-          {/* File count badge */}
-          <span className="ml-auto mr-8 bg-nomo-500 text-black px-2 py-1 rounded-full text-sm font-medium">
-            {filteredFiles.length} files
-          </span>
-
           {/* Expand/Collapse Icon */}
           <svg
-            className={`w-6 h-6 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+            className={`ml-auto w-6 h-6 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -115,17 +161,12 @@ function Category({ category, selectedLanguage }) {
               {getCategoryIcon()}
 
               {/* Category Title - with truncation for very small screens */}
-              <h2 className="text-xl font-bold text-white truncate">
+              <h2 className="text-lg font-bold text-white">
                 {category.name}
               </h2>
             </div>
 
             <div className="flex items-center">
-              {/* File count badge */}
-              <span className="mr-3 bg-nomo-500 text-black px-2 py-1 rounded-full text-xs font-medium">
-                {filteredFiles.length} files
-              </span>
-
               {/* Expand/Collapse Icon */}
               <svg
                 className={`w-5 h-5 text-white transition-transform ${isExpanded ? 'rotate-180' : ''}`}
@@ -152,19 +193,27 @@ function Category({ category, selectedLanguage }) {
         </div>
       )}
 
-      {/* Files Container */}
-      {isExpanded && filteredFiles.length > 0 && (
-        <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredFiles.map(file => (
-            <MediaFile key={file.hash} file={file} />
-          ))}
-        </div>
-      )}
+      {/* Main Category Content */}
+      {isExpanded && (
+        <div className="px-6 pt-4 pb-6">
+          {/* Main category files (not in subfolders) */}
+          {categoryFiles.length > 0 && (
+            <div className="mb-8">
+              {renderFilesGrid(categoryFiles)}
+            </div>
+          )}
 
-      {/* No files message */}
-      {isExpanded && filteredFiles.length === 0 && (
-        <div className="p-6 text-center">
-          <p className="text-neutral-300">No files available in the selected language.</p>
+          {/* All subfolders - recursively rendered and always expanded */}
+          {processedSubfolders.length > 0 && (
+            <RenderSubfolders subfolders={processedSubfolders} />
+          )}
+
+          {/* No files message */}
+          {totalFileCount === 0 && (
+            <div className="text-center py-8">
+              <p className="text-neutral-300">No files available in the selected language.</p>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -13,13 +13,19 @@ function App() {
   ])
 
   useEffect(() => {
-    // Fetch the media data from the JSON file
-    const fetchMedia = fetch('/media.json')
+    // Fetch the metadata.json from googleDriveFiles instead of media.json
+    const fetchMedia = fetch('/googleDriveFiles/metadata.json')
       .then(response => {
         if (!response.ok) {
-          throw new Error('Failed to fetch media data')
+          throw new Error('Failed to fetch metadata')
         }
         return response.json()
+      })
+      .then(data => {
+        // Convert to the format expected by the rest of the application
+        return {
+          files: data // The metadata.json is already an array of files
+        }
       })
 
     // Fetch the categories data from the JSON file
@@ -71,10 +77,12 @@ function App() {
             }
           })
 
-          // Ensure English is always available
-          if (!languageCodes.has('en')) {
-            languages.unshift({ code: 'en', name: 'English' })
-          }
+          // Sort languages with English first, then alphabetically by name
+          languages.sort((a, b) => {
+            if (a.code === 'en') return -1;
+            if (b.code === 'en') return 1;
+            return a.name.localeCompare(b.name);
+          });
 
           setAvailableLanguages(languages)
         }
@@ -88,7 +96,7 @@ function App() {
       })
   }, [])
 
-  // Process the data to organize files by categories
+  // Process the data to organize files by categories and subcategories with support for multiple levels
   const processMediaData = () => {
     if (!mediaData || !mediaData.files || !Array.isArray(mediaData.files)) {
       return { categories: [] }
@@ -103,6 +111,7 @@ function App() {
         return
       }
 
+      // Use the first entry in the folderLocation array as the category
       const categoryName = file.folderLocation[0]
 
       if (!categoriesMap[categoryName]) {
@@ -117,11 +126,66 @@ function App() {
           // Add icon and description if they exist in categoriesData
           icon: categoryInfo?.icon || null,
           description: categoryInfo?.description || null,
+          subfolders: {},
           files: []
         }
       }
 
-      categoriesMap[categoryName].files.push(file)
+      if (file.folderLocation.length === 1) {
+        // File is directly in the main category
+        categoriesMap[categoryName].files.push(file)
+      } else {
+        // File is in a subfolder structure
+        let currentLevel = categoriesMap[categoryName].subfolders
+        let parentPath = categoryName
+
+        // Process all subfolder levels except the last one (which contains the file)
+        for (let i = 1; i < file.folderLocation.length; i++) {
+          const folderName = file.folderLocation[i]
+          parentPath = `${parentPath}/${folderName}`
+
+          if (!currentLevel[parentPath]) {
+            currentLevel[parentPath] = {
+              id: parentPath.toLowerCase().replace(/[^a-z0-9]/g, '-'),
+              name: folderName,
+              path: parentPath,
+              level: i,
+              subfolders: {},
+              files: []
+            }
+          }
+
+          // Add file to the current subfolder level
+          if (i === file.folderLocation.length - 1) {
+            currentLevel[parentPath].files.push(file)
+          } else {
+            // Move to next level of subfolders
+            currentLevel = currentLevel[parentPath].subfolders
+          }
+        }
+      }
+    })
+
+    // Convert subfolder maps to arrays at all levels
+    const processSubfolders = (folder) => {
+      if (folder.subfolders && Object.keys(folder.subfolders).length > 0) {
+        // Process each subfolder
+        Object.values(folder.subfolders).forEach(subfolder => {
+          processSubfolders(subfolder)
+        })
+
+        // Convert subfolders object to array and sort by name
+        folder.subfolders = Object.values(folder.subfolders)
+          .sort((a, b) => a.name.localeCompare(b.name))
+      }
+    }
+
+    // Process each category
+    Object.values(categoriesMap).forEach(category => {
+      processSubfolders(category)
+      // Convert top-level subfolders to array
+      category.subfolders = Object.values(category.subfolders)
+        .sort((a, b) => a.name.localeCompare(b.name))
     })
 
     return {

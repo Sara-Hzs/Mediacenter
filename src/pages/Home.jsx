@@ -30,7 +30,7 @@ function Home({
           <h2 className="text-xl font-bold text-red-500 mb-2">Error Loading Media</h2>
           <p className="text-neutral-200">{error}</p>
           <p className="text-neutral-300 mt-4">
-            Please make sure the media.json file is available in the public directory.
+            Please make sure the metadata.json file is available in the googleDriveFiles directory.
           </p>
         </div>
       )
@@ -41,7 +41,7 @@ function Home({
         <div className="bg-neutral-800 rounded-lg p-6">
           <h2 className="text-xl font-bold text-nomo-500 mb-2">No Media Found</h2>
           <p className="text-neutral-300">
-            No media categories were found. Add some categories to your media.json file.
+            No media categories were found. Please check the metadata.json file in the googleDriveFiles directory.
           </p>
         </div>
       )
@@ -61,14 +61,14 @@ function Home({
   }
 
   return (
-    <div className="min-h-screen bg- text-white">
+    <div className="min-h-screen bg-neutral-900 text-white">
       <Header
         selectedLanguage={selectedLanguage}
         availableLanguages={availableLanguages}
         onLanguageChange={onLanguageChange}
       />
 
-      <main className="container mx-auto px-4 pt-24 pb-12">
+      <main className="container mx-auto pt-24 pb-12">
         {renderContent()}
       </main>
     </div>

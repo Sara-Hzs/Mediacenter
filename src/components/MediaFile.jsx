@@ -28,8 +28,16 @@ function MediaFile({ file }) {
     return fullFileName
   }
 
-  // Get file path from folderLocation array
+  // Get file path based on the new structure (hash-based in googleDriveFiles folder)
   const getFilePath = () => {
+    if (file.hash) {
+      // Extract the file extension from fullFileName
+      const extension = file.fullFileName.split('.').pop().toLowerCase();
+      // Files are stored directly in the googleDriveFiles directory with their hash as the filename + appropriate extension
+      return `/googleDriveFiles/${file.hash}.${extension}`
+    }
+
+    // Fallback to the old path structure if hash is not available
     if (!file.folderLocation || !Array.isArray(file.folderLocation)) {
       return file.fullFileName
     }
@@ -39,18 +47,6 @@ function MediaFile({ file }) {
   const fileType = getFileType(file.fullFileName)
   const displayName = getDisplayName(file.fullFileName)
   const filePath = getFilePath()
-
-  // Truncate filename if too long
-  const truncateFilename = (name, maxLength = 30) => {
-    if (name.length <= maxLength) return name
-
-    const extension = name.split('.').pop()
-    const nameWithoutExtension = name.substring(0, name.lastIndexOf('.'))
-
-    return nameWithoutExtension.substring(0, maxLength - extension.length - 3) + '...' + '.' + extension
-  }
-
-  const truncatedName = truncateFilename(displayName)
 
   const getFileIcon = () => {
     switch (fileType) {
@@ -121,9 +117,9 @@ function MediaFile({ file }) {
     if (fileType === 'pdf' || fileType === 'document') {
       return (
         <a
-          href={`/${filePath}`}
+          href={filePath}
           download
-          className="mt-4 inline-flex items-center text-sm font-medium text-nomo-500 hover:text-nomo-400"
+          className="flex justify-center mt-1 w-fill items-center text-sm font-medium text-nomo-500 hover:text-nomo-400"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -150,17 +146,17 @@ function MediaFile({ file }) {
           </div>
 
           <div className="ml-4 flex-1 min-w-0">
-            {/* Title with truncation */}
-            <h3 className="text-lg font-medium text-white overflow-hidden text-ellipsis">
-              {truncatedName}
+            {/* Title with word-wrap instead of truncation */}
+            <h3 className="text-lg font-medium text-white break-words hyphens-auto">
+              {displayName}
             </h3>
 
-            {/* Language badge */}
-            <div className="mt-2">
-              <span className="text-xs text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded">
-                {file.languageCode.toUpperCase()}
-              </span>
-            </div>
+            {/*/!* Language badge *!/*/}
+            {/*<div className="mt-2">*/}
+            {/*  <span className="text-xs text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded">*/}
+            {/*    {file.languageCode.toUpperCase()}*/}
+            {/*  </span>*/}
+            {/*</div>*/}
 
             {/* View toggle for media files */}
             {(fileType === 'image' || fileType === 'video') && (
@@ -181,11 +177,10 @@ function MediaFile({ file }) {
               </div>
             )}
 
-            {/* Download link with more spacing */}
-            <div className="mt-2">
-              {renderDownloadLink()}
-            </div>
           </div>
+        </div>
+        <div className="mt-2">
+          {renderDownloadLink()}
         </div>
       </div>
 

@@ -11,8 +11,6 @@
   --color-nomo-700: #997B15;
   --color-nomo-800: #7C640D;
   --color-nomo-900: #5C4A06;
-
-  --color-test: #FF00FF; /* Bright magenta test color */
 }
 
 body {
@@ -63,9 +61,56 @@ body {
   overflow: hidden;
 }
 
+/* Custom styles for subfolders */
+.subfolder {
+  margin-bottom: 1.5rem;
+}
+
+/* Increase height of file cards to give more space for file names */
+.grid-cols-1 > div,
+.grid-cols-2 > div,
+.grid-cols-3 > div {
+  min-height: 120px; /* Give more space for longer filenames */
+}
+
+/* Style for file names to ensure they wrap properly */
+.break-words {
+  word-break: break-word;
+  hyphens: auto;
+  max-width: 100%;
+}
+
+/* Subfolder level styling */
+.border-l-1 { border-left-width: 1px; }
+.border-l-2 { border-left-width: 2px; }
+.border-l-3 { border-left-width: 3px; }
+.border-l-4 { border-left-width: 4px; }
+
+.border-nomo-400 { border-color: var(--color-nomo-400); }
+.border-nomo-500 { border-color: var(--color-nomo-500); }
+.border-nomo-600 { border-color: var(--color-nomo-600); }
+
+.ml-3 { margin-left: 0.75rem; }
+.ml-4 { margin-left: 1rem; }
+.ml-5 { margin-left: 1.25rem; }
+.ml-6 { margin-left: 1.5rem; }
+
+.text-md { font-size: 1rem; line-height: 1.5rem; }
+.text-lg { font-size: 1.125rem; line-height: 1.75rem; }
+
 /* Fix for mobile layout */
 @media (max-width: 640px) {
-  .grid-cols-2 {
+  .grid-cols-2, .grid-cols-3 {
     grid-template-columns: 1fr;
+  }
+
+  /* Adjust indentation for mobile */
+  .ml-4, .ml-5, .ml-6 {
+    margin-left: 0.75rem;
+  }
+
+  /* Make subfolder headers smaller on mobile */
+  .subfolder h3 {
+    font-size: 1rem;
   }
 }
