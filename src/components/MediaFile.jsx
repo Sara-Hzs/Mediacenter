@@ -151,7 +151,7 @@ function MediaFile({ file, isTarget }) {
             {/* Title with word-wrap instead of truncation */}
             <h3 className="text-lg font-medium text-white break-words hyphens-auto">
               {displayName}
-              <span className="text-xs block mt-1 text-gray-400">Hash: {file.hash}</span>
+              {/*<span className="text-xs block mt-1 text-gray-400">Hash: {file.hash}</span>*/}
             </h3>
 
             {/*/!* Language badge *!/*/}
