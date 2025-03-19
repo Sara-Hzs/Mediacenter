@@ -1,19 +1,47 @@
 import { useState } from 'react'
 import MediaFile from './MediaFile'
 
-function Category({ category, selectedLanguage }) {
+function Category({ category, selectedLanguage, userStatus = {} }) {
+  const { isPromoter } = userStatus || {}
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
   }
 
-  // Filter files based on selected language
+  // Check if a file should be accessible to the current user
+  const isFileAccessible = (file) => {
+    // If file is from a protected folder, check if user is a promoter
+    if (file.folderLocation && file.folderLocation.length >= 2) {
+      // This example assumes files in specific folders are promoter-only
+      // You can modify this logic based on your specific requirements
+      const subfolderPath = file.folderLocation.slice(1).join('/');
+
+      // Check if the path contains any of these protected folder names
+      const protectedFolders = [
+        'Whitepaper',
+        'Promoter Materials',
+        'Internal'
+      ];
+
+      // If it's in a protected folder, only promoters can access it
+      if (protectedFolders.some(folder => subfolderPath.includes(folder))) {
+        return isPromoter === true;
+      }
+    }
+
+    // All other files are accessible to everyone
+    return true;
+  }
+
+  // Filter files based on selected language and access permissions
   const getLanguageFilteredFiles = (filesList) => {
     if (!filesList || !Array.isArray(filesList)) return []
 
-    // Just filter by the selected language - show only files with matching languageCode
-    return filesList.filter(file => file.languageCode === selectedLanguage);
+    // Filter by language and access permissions
+    return filesList.filter(file =>
+      file.languageCode === selectedLanguage && isFileAccessible(file)
+    );
   }
 
   // Filter and process all subfolders recursively
@@ -76,7 +104,7 @@ function Category({ category, selectedLanguage }) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {files.map(file => (
-          <MediaFile key={file.hash} file={file} />
+          <MediaFile key={file.hash} file={file} userStatus={userStatus} />
         ))}
       </div>
     );

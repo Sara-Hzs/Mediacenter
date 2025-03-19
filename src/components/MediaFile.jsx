@@ -1,12 +1,41 @@
 import { useState } from 'react'
 
-function MediaFile({ file }) {
+function MediaFile({ file, userStatus = {} }) {
+
   const [expanded, setExpanded] = useState(false)
 
   const toggleExpand = () => {
     if (file.type === 'image' || file.type === 'video') {
       setExpanded(!expanded)
     }
+  }
+
+  const { isPromoter } = userStatus || {}
+
+  const isFileAccessible = () => {
+    console.log("Checking file access for:", file.fullFileName, "User is promoter?", isPromoter);
+
+    if (file.folderLocation && file.folderLocation.length >= 2) {
+      const subfolderPath = file.folderLocation.slice(1).join('/');
+
+      const protectedFolders = [
+        'Whitepaper',
+        'Promoter Materials',
+        'Internal'
+      ];
+
+      if (protectedFolders.some(folder => subfolderPath.includes(folder))) {
+        console.warn("❌ Access Denied for:", file.fullFileName);
+        return false;  // ✅ Restrict access if the user is NOT a promoter
+      }
+    }
+
+    return true;  // ✅ Allow access if not in a protected folder
+  };
+
+  // 🚀 NEW: Completely hide restricted files instead of showing them
+  if (!isFileAccessible()) {
+    return null;  // ✅ Restricted files will not render at all
   }
 
   // Determine file type based on file extension
@@ -77,7 +106,27 @@ function MediaFile({ file }) {
         )
     }
   }
-
+  if (!isFileAccessible()) {
+    return (
+      <div className="bg-neutral-700 rounded-lg overflow-hidden shadow">
+        <div className="p-4">
+          <div className="flex items-start">
+            <div className="pt-1">
+              {getFileIcon()}
+            </div>
+            <div className="ml-4">
+              <h3 className="text-lg font-medium text-white">{displayName}</h3>
+              <div className="mt-2">
+                <span className="text-xs bg-red-800 text-white px-2 py-1 rounded">
+                  Restricted Content – Promoters Only
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
   // Render different components based on file type
   const renderFileContent = () => {
     if (!expanded) return null

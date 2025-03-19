@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Home from './pages/Home'
+import useUserStatus from './hooks/useUserStatus'
 
 function App() {
   const [mediaData, setMediaData] = useState(null)
@@ -11,7 +12,8 @@ function App() {
   const [availableLanguages, setAvailableLanguages] = useState([
     { code: 'en', name: 'English' }
   ])
-
+  const { userStatus, loading: userStatusLoading } = useUserStatus()
+  console.log("User Status in App:", userStatus);
   useEffect(() => {
     // Fetch the metadata.json from googleDriveFiles instead of media.json
     const fetchMedia = fetch('/googleDriveFiles/metadata.json')
@@ -205,11 +207,12 @@ function App() {
         <Route path="/" element={
           <Home
             mediaData={processedData}
-            loading={loading}
+            loading={loading || userStatusLoading}
             error={error}
             selectedLanguage={selectedLanguage}
             availableLanguages={availableLanguages}
             onLanguageChange={handleLanguageChange}
+            userStatus={userStatus}
           />
         } />
       </Routes>

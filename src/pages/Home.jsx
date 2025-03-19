@@ -2,6 +2,8 @@ import { useEffect } from 'react'
 import { nomoFallbackQRCode } from "nomo-webon-kit"
 import Header from '../components/Header'
 import Category from '../components/Category'
+import UserStatusBanner from '../components/UserStatusBanner'
+
 
 function Home({
                 mediaData,
@@ -9,7 +11,8 @@ function Home({
                 error,
                 selectedLanguage,
                 availableLanguages,
-                onLanguageChange
+                onLanguageChange,
+                userStatus
               }) {
   useEffect(() => {
     // nomoFallbackQRCode()
@@ -54,6 +57,7 @@ function Home({
             key={category.id}
             category={category}
             selectedLanguage={selectedLanguage}
+            userStatus={userStatus}
           />
         ))}
       </>
@@ -69,6 +73,7 @@ function Home({
       />
 
       <main className="container mx-auto pt-24 pb-12">
+        <UserStatusBanner userStatus={userStatus} />
         {renderContent()}
       </main>
     </div>

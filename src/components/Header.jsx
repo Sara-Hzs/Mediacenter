@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import logo from '../assets/logo.png'
 import LanguageSelector from './LanguageSelector'
 
-function Header({ selectedLanguage, availableLanguages, onLanguageChange }) {
+function Header({ selectedLanguage, availableLanguages, onLanguageChange, userStatus = {} }) {
   const [scrolled, setScrolled] = useState(false)
+  const { isPromoter } = userStatus || {}
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,11 +37,23 @@ function Header({ selectedLanguage, availableLanguages, onLanguageChange }) {
             Media Center
           </h1>
         </div>
-        <LanguageSelector
-          selectedLanguage={selectedLanguage}
-          availableLanguages={availableLanguages}
-          onLanguageChange={onLanguageChange}
-        />
+
+        <div className="flex items-center">
+          {/* Promoter Badge */}
+          {isPromoter && (
+            <div className="hidden md:flex items-center mr-4">
+              <div className="px-3 py-1 rounded-full text-sm font-medium bg-nomo-500 text-black">
+                VOO Promoter
+              </div>
+            </div>
+          )}
+
+          <LanguageSelector
+            selectedLanguage={selectedLanguage}
+            availableLanguages={availableLanguages}
+            onLanguageChange={onLanguageChange}
+          />
+        </div>
       </div>
     </header>
   )
