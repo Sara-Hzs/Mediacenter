@@ -1,7 +1,6 @@
 import { useState } from 'react'
-import { nomo } from 'nomo-webon-kit'
 
-function MediaFile({ file }) {
+function MediaFile({ file, isTarget }) {
   const [expanded, setExpanded] = useState(false)
 
   const toggleExpand = () => {
@@ -117,27 +116,25 @@ function MediaFile({ file }) {
   const renderDownloadLink = () => {
     if (fileType === 'pdf' || fileType === 'document') {
       return (
-        <div
-          onClick={async () => {
-            await nomo.launchUrl({
-              url: `https://mediacenter.nomo.zone/${filePath}`,
-              launchMode: 'externalApplication'
-            })
-          }}
+        <a
+          href={filePath}
+          download
           className="flex justify-center mt-1 w-fill items-center text-sm font-medium text-nomo-500 hover:text-nomo-400"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
           Download {fileType.toUpperCase()}
-        </div>
+        </a>
       )
     }
     return null
   }
 
   return (
-    <div className="bg-neutral-700 rounded-lg overflow-hidden shadow transition-all hover:shadow-lg">
+    <div className={`bg-neutral-700 rounded-lg overflow-hidden shadow transition-all hover:shadow-lg ${
+      isTarget ? 'ring-2 ring-nomo-500' : ''
+    }`}>
       <div
         className={`p-4 ${
           (fileType === 'image' || fileType === 'video') ? 'cursor-pointer hover:bg-neutral-600' : ''
@@ -154,6 +151,7 @@ function MediaFile({ file }) {
             {/* Title with word-wrap instead of truncation */}
             <h3 className="text-lg font-medium text-white break-words hyphens-auto">
               {displayName}
+              <span className="text-xs block mt-1 text-gray-400">Hash: {file.hash}</span>
             </h3>
 
             {/*/!* Language badge *!/*/}

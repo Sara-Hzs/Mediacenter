@@ -1,11 +1,51 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import MediaFile from './MediaFile'
 
-function Category({ category, selectedLanguage }) {
+function Category({ category, selectedLanguage, targetFileHash }) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const targetFileRef = useRef(null)
 
   const toggleExpand = () => {
     setIsExpanded(!isExpanded)
+  }
+
+  // Expand category if it contains the target file
+  useEffect(() => {
+    if (targetFileHash) {
+      // Check if this category contains the target file
+      const containsTargetFile = checkIfContainsFile(category, targetFileHash)
+      if (containsTargetFile) {
+        setIsExpanded(true)
+      }
+    }
+  }, [targetFileHash, category])
+
+  // Helper function to check if category contains file
+  const checkIfContainsFile = (cat, hash) => {
+    // Check files directly in the category
+    if (cat.files && Array.isArray(cat.files)) {
+      const directMatch = cat.files.some(file => file.hash === hash)
+      if (directMatch) return true
+    }
+
+    // Check files in subfolders
+    if (cat.subfolders && Array.isArray(cat.subfolders)) {
+      for (const subfolder of cat.subfolders) {
+        // Check files in this subfolder
+        if (subfolder.files && Array.isArray(subfolder.files)) {
+          const subfolderMatch = subfolder.files.some(file => file.hash === hash)
+          if (subfolderMatch) return true
+        }
+
+        // Recursively check nested subfolders
+        if (subfolder.subfolders && subfolder.subfolders.length > 0) {
+          const nestedMatch = checkIfContainsFile(subfolder, hash)
+          if (nestedMatch) return true
+        }
+      }
+    }
+
+    return false
   }
 
   // Filter files based on selected language
@@ -76,7 +116,13 @@ function Category({ category, selectedLanguage }) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {files.map(file => (
-          <MediaFile key={file.hash} file={file} />
+          <div
+            key={file.hash}
+            ref={file.hash === targetFileHash ? targetFileRef : null}
+            className={file.hash === targetFileHash ? "ring-2 ring-nomo-500 rounded-lg" : ""}
+          >
+            <MediaFile key={file.hash} file={file} isTarget={file.hash === targetFileHash} />
+          </div>
         ))}
       </div>
     );
@@ -100,7 +146,17 @@ function Category({ category, selectedLanguage }) {
             {/* Files in this subfolder */}
             <div>
               {subfolder.filteredFiles && subfolder.filteredFiles.length > 0 ? (
-                renderFilesGrid(subfolder.filteredFiles)
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {subfolder.filteredFiles.map(file => (
+                    <div
+                      key={file.hash}
+                      ref={file.hash === targetFileHash ? targetFileRef : null}
+                      className={file.hash === targetFileHash ? "ring-2 ring-nomo-500 rounded-lg" : ""}
+                    >
+                      <MediaFile key={file.hash} file={file} isTarget={file.hash === targetFileHash} />
+                    </div>
+                  ))}
+                </div>
               ) : (
                 subfolder.subfolders && subfolder.subfolders.length === 0 && (
                   <p className="text-center text-neutral-300 py-2">No files available in the selected language.</p>
@@ -119,6 +175,19 @@ function Category({ category, selectedLanguage }) {
       </div>
     );
   };
+
+
+  useEffect(() => {
+    // If category is expanded and contains the target file, scroll to it
+    if (isExpanded && targetFileRef.current && targetFileHash) {
+      setTimeout(() => {
+        targetFileRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        })
+      }, 300)
+    }
+  }, [isExpanded, targetFileHash])
 
   return (
     <div className="mb-8 bg-neutral-800 overflow-hidden shadow-lg">

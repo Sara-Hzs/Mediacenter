@@ -11,8 +11,14 @@ function App() {
   const [availableLanguages, setAvailableLanguages] = useState([
     { code: 'en', name: 'English' }
   ])
-
+  const [targetFileHash, setTargetFileHash] = useState(null)
   useEffect(() => {
+
+    const queryParams = new URLSearchParams(window.location.search)
+    const fileHash = queryParams.get('file')
+    if (fileHash) {
+      setTargetFileHash(fileHash)
+    }
     // Fetch the metadata.json from googleDriveFiles instead of media.json
     const fetchMedia = fetch('/googleDriveFiles/metadata.json')
       .then(response => {
@@ -210,6 +216,7 @@ function App() {
             selectedLanguage={selectedLanguage}
             availableLanguages={availableLanguages}
             onLanguageChange={handleLanguageChange}
+            targetFileHash={targetFileHash}
           />
         } />
       </Routes>

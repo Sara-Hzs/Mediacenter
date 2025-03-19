@@ -9,7 +9,8 @@ function Home({
                 error,
                 selectedLanguage,
                 availableLanguages,
-                onLanguageChange
+                onLanguageChange,
+                targetFileHash
               }) {
   useEffect(() => {
     // nomoFallbackQRCode()
@@ -54,6 +55,7 @@ function Home({
             key={category.id}
             category={category}
             selectedLanguage={selectedLanguage}
+            targetFileHash={targetFileHash}
           />
         ))}
       </>
