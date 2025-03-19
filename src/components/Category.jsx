@@ -119,7 +119,7 @@ function Category({ category, selectedLanguage, targetFileHash }) {
           <div
             key={file.hash}
             ref={file.hash === targetFileHash ? targetFileRef : null}
-            className={file.hash === targetFileHash ? "ring-2 ring-nomo-500 rounded-lg" : ""}
+
           >
             <MediaFile key={file.hash} file={file} isTarget={file.hash === targetFileHash} />
           </div>
@@ -151,7 +151,7 @@ function Category({ category, selectedLanguage, targetFileHash }) {
                     <div
                       key={file.hash}
                       ref={file.hash === targetFileHash ? targetFileRef : null}
-                      className={file.hash === targetFileHash ? "ring-2 ring-nomo-500 rounded-lg" : ""}
+
                     >
                       <MediaFile key={file.hash} file={file} isTarget={file.hash === targetFileHash} />
                     </div>
