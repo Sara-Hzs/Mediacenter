@@ -70,7 +70,7 @@ body {
 .grid-cols-1 > div,
 .grid-cols-2 > div,
 .grid-cols-3 > div {
-  min-height: 120px; /* Give more space for longer filenames */
+  min-height: 70px; /* Give more space for longer filenames */
 }
 
 /* Style for file names to ensure they wrap properly */

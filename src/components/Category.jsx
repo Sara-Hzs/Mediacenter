@@ -119,14 +119,18 @@ function Category({ category, selectedLanguage, targetFileHash }) {
     if (!files || files.length === 0) return null;
 
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
         {files.map(file => (
           <div
             key={file.hash}
             ref={file.hash === targetFileHash ? targetFileRef : null}
-
           >
-            <MediaFile key={file.hash} file={file} isTarget={file.hash === targetFileHash} />
+            <MediaFile
+              key={file.hash}
+              file={file}
+              isTarget={file.hash === targetFileHash}
+              selectedLanguage={selectedLanguage}
+            />
           </div>
         ))}
       </div>
@@ -138,7 +142,7 @@ function Category({ category, selectedLanguage, targetFileHash }) {
     if (!subfolders || subfolders.length === 0) return null;
 
     return (
-      <div className="space-y-8">
+      <div className="space-y-4">
         {subfolders.map(subfolder => (
           <div key={subfolder.id} className="subfolder">
             {/* Subfolder header with appropriate size based on level */}
@@ -151,14 +155,18 @@ function Category({ category, selectedLanguage, targetFileHash }) {
             {/* Files in this subfolder */}
             <div>
               {subfolder.filteredFiles && subfolder.filteredFiles.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-3">
                   {subfolder.filteredFiles.map(file => (
                     <div
                       key={file.hash}
                       ref={file.hash === targetFileHash ? targetFileRef : null}
-
                     >
-                      <MediaFile key={file.hash} file={file} isTarget={file.hash === targetFileHash} />
+                      <MediaFile
+                        key={file.hash}
+                        file={file}
+                        isTarget={file.hash === targetFileHash}
+                        selectedLanguage={selectedLanguage}
+                      />
                     </div>
                   ))}
                 </div>
@@ -195,7 +203,7 @@ function Category({ category, selectedLanguage, targetFileHash }) {
   }, [isExpanded, targetFileHash])
 
   return (
-    <div className="mb-8 bg-neutral-800 overflow-hidden shadow-lg">
+    <div className="mb-4 bg-neutral-800 overflow-hidden shadow-lg">
       {/* Category Header */}
       <div
         className="relative p-4 cursor-pointer"
@@ -272,7 +280,7 @@ function Category({ category, selectedLanguage, targetFileHash }) {
         <div className="px-6 pt-4 pb-6">
           {/* Main category files (not in subfolders) */}
           {categoryFiles.length > 0 && (
-            <div className="mb-8">
+            <div className="mb-4">
               {renderFilesGrid(categoryFiles)}
             </div>
           )}

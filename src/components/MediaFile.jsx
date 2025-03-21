@@ -1,21 +1,37 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { nomo } from 'nomo-webon-kit'
 
-function MediaFile({ file, isTarget }) {
+function MediaFile({ file, isTarget, selectedLanguage  }) {
   const [expanded, setExpanded] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 768)
 
-  const toggleExpand = () => {
-    if (fileType === 'image') {
-      // Only expand images inline
-      setExpanded(!expanded)
-    } else if (fileType === 'video') {
-      // For videos, launch external application directly instead of expanding
-      nomo.launchUrl({
-        url: `https://mediacenter.nomo.zone/${filePath}`,
-        launchMode: 'externalApplication'
-      })
-    }
-  }
+  useEffect(() => {
+    const handleResize = () => {
+      setIsDesktop(window.innerWidth > 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const getLanguageFlag = () => {
+    // Only show language flag when language code exists
+    if (!file.languageCode) return null;
+
+    // Map of language codes to flag emojis
+    const languageFlags = {
+      'en': '🇬🇧',
+      'de': '🇩🇪',
+      'es': '🇪🇸',
+      'fr': '🇫🇷',
+      'it': '🇮🇹',
+    };
+
+    // Get flag emoji or use language code as fallback
+    const flag = languageFlags[file.languageCode] || file.languageCode.toUpperCase();
+
+    return flag;
+  };
 
   // Determine file type based on file extension
   const getFileType = (fileName) => {
@@ -60,41 +76,40 @@ function MediaFile({ file, isTarget }) {
     switch (fileType) {
       case 'video':
         return (
-          <svg className="w-10 h-10 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         )
       case 'pdf':
         return (
-          <svg className="w-10 h-10 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
         )
       case 'image':
         return (
-          <svg className="w-10 h-10 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         )
       default:
         return (
-          <svg className="w-10 h-10 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-8 h-8 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
           </svg>
         )
     }
   }
 
-
-// Render different components based on file type
+  // Render different components based on file type
   const renderFileContent = () => {
     if (!expanded) return null
 
     // Only handle images for inline display
     if (fileType === 'image') {
       return (
-        <div className="mt-4">
+        <div className="mt-2 md:mt-3">
           <img
             src={`/${filePath}`}
             alt={displayName}
@@ -107,85 +122,64 @@ function MediaFile({ file, isTarget }) {
     return null
   }
 
-  const renderDownloadLink = () => {
-    // Handle both document types and videos with the same external application flow
-    if (fileType === 'pdf' || fileType === 'document' || fileType === 'video') {
-      return (
-        <div
-          onClick={async () => {
-            await nomo.launchUrl({
-              url: `https://mediacenter.nomo.zone/${filePath}`,
-              launchMode: 'externalApplication'
-            })
-          }}
-          className="flex justify-center mt-1 w-fill items-center text-sm font-medium text-nomo-500 hover:text-nomo-400"
-        >
-          <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          {fileType === 'video' ? 'Open Video' : `Download ${fileType.toUpperCase()}`}
-        </div>
-      )
+  // Handle file click
+  const handleFileClick = async () => {
+    if (fileType === 'image') {
+      // Toggle expand for images
+      setExpanded(!expanded);
+    } else {
+      // For all other file types, launch external application
+      await nomo.launchUrl({
+        url: `https://mediacenter.nomo.zone/${filePath}`,
+        launchMode: 'externalApplication'
+      });
     }
-    return null
-  }
+  };
+
   return (
-    <div className={`bg-neutral-700 rounded-lg overflow-hidden shadow transition-all hover:shadow-lg ${
-      isTarget ? 'ring-2 ring-nomo-500' : ''
-    }`}>
-      <div
-        className={`p-4 ${
-          (fileType === 'image' || fileType === 'video') ? 'cursor-pointer hover:bg-neutral-600' : ''
-        }`}
-        onClick={(fileType === 'image' || fileType === 'video') ? toggleExpand : undefined}
-      >
-        <div className="flex items-start">
-          {/* Fixed size icon */}
-          <div className="pt-1">
+    <div
+      className={`bg-neutral-700 rounded-lg overflow-hidden shadow transition-all hover:shadow-lg ${
+        isTarget ? 'ring-2 ring-nomo-500' : ''
+      } cursor-pointer hover:bg-neutral-600 h-16 flex`}
+      onClick={handleFileClick}
+    >
+      <div className="px-4 flex items-center justify-center w-full">
+        <div className="flex items-center w-full">
+          {/* File icon */}
+          <div className="flex-shrink-0">
             {getFileIcon()}
           </div>
 
-          <div className="ml-4 flex-1 min-w-0">
-            {/* Title with word-wrap instead of truncation */}
-            <h3 className="text-lg font-medium text-white break-words hyphens-auto">
-              {displayName}
-              {/*<span className="text-xs block mt-1 text-gray-400">Hash: {file.hash}</span>*/}
+          {/* Language flag - moved between icon and title */}
+          {selectedLanguage === 'all' && file.languageCode && (
+            <div className="ml-2 mr-2">
+              <span className="inline-flex items-center px-1.5 py-0.5 rounded text-xs font-medium bg-neutral-700 text-neutral-200 border border-neutral-600">
+                {getLanguageFlag()}
+              </span>
+            </div>
+          )}
+
+          <div className="ml-2 flex-1 min-w-0 flex items-center">
+            <h3 className="text-base font-medium text-white break-words hyphens-auto w-full">
+              {isDesktop
+                ? (displayName.length > 40 ? displayName.substring(0, 40) + "..." : displayName)
+                : (displayName.length > 20 ? displayName.substring(0, 20) + "..." : displayName)
+              }
             </h3>
-
-            {/*/!* Language badge *!/*/}
-            {/*<div className="mt-2">*/}
-            {/*  <span className="text-xs text-neutral-400 bg-neutral-800 px-2 py-0.5 rounded">*/}
-            {/*    {file.languageCode.toUpperCase()}*/}
-            {/*  </span>*/}
-            {/*</div>*/}
-
-            {/* View toggle for media files */}
-            {(fileType === 'image' || fileType === 'video') && (
-              <div className="mt-2">
-                <button
-                  className="text-neutral-300 hover:text-white text-sm flex items-center"
-                >
-                  {expanded ? 'Hide' : 'View'}
-                  <svg
-                    className={`ml-1 w-4 h-4 transition-transform ${expanded ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-              </div>
-            )}
-
           </div>
-        </div>
-        <div className="mt-2">
-          {renderDownloadLink()}
+
+          {/* Download icon positioned to the right */}
+          <div className="ml-2 flex-shrink-0">
+            {fileType === 'pdf' || fileType === 'document' || fileType === 'video' ? (
+              <svg className="w-5 h-5 text-nomo-500 hover:text-nomo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            ) : null}
+          </div>
         </div>
       </div>
 
-      {renderFileContent()}
+      {expanded && renderFileContent()}
     </div>
   )
 }
