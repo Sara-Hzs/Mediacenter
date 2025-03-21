@@ -5,8 +5,15 @@ function MediaFile({ file, isTarget }) {
   const [expanded, setExpanded] = useState(false)
 
   const toggleExpand = () => {
-    if (file.type === 'image' || file.type === 'video') {
+    if (fileType === 'image') {
+      // Only expand images inline
       setExpanded(!expanded)
+    } else if (fileType === 'video') {
+      // For videos, launch external application directly instead of expanding
+      nomo.launchUrl({
+        url: `https://mediacenter.nomo.zone/${filePath}`,
+        launchMode: 'externalApplication'
+      })
     }
   }
 
@@ -79,43 +86,30 @@ function MediaFile({ file, isTarget }) {
     }
   }
 
-  // Render different components based on file type
+
+// Render different components based on file type
   const renderFileContent = () => {
     if (!expanded) return null
 
-    switch (fileType) {
-      case 'video':
-        return (
-          <div className="mt-4">
-            <video
-              className="w-full rounded-lg"
-              controls
-              poster={`/${filePath.replace(/\.[^/.]+$/, '')}-poster.jpg`}
-            >
-              <source src={`/${filePath}`} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
-          </div>
-        )
-
-      case 'image':
-        return (
-          <div className="mt-4">
-            <img
-              src={`/${filePath}`}
-              alt={displayName}
-              className="w-full rounded-lg"
-            />
-          </div>
-        )
-
-      default:
-        return null
+    // Only handle images for inline display
+    if (fileType === 'image') {
+      return (
+        <div className="mt-4">
+          <img
+            src={`/${filePath}`}
+            alt={displayName}
+            className="w-full rounded-lg"
+          />
+        </div>
+      )
     }
+
+    return null
   }
 
   const renderDownloadLink = () => {
-    if (fileType === 'pdf' || fileType === 'document') {
+    // Handle both document types and videos with the same external application flow
+    if (fileType === 'pdf' || fileType === 'document' || fileType === 'video') {
       return (
         <div
           onClick={async () => {
@@ -129,13 +123,12 @@ function MediaFile({ file, isTarget }) {
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
           </svg>
-          Download {fileType.toUpperCase()}
+          {fileType === 'video' ? 'Open Video' : `Download ${fileType.toUpperCase()}`}
         </div>
       )
     }
     return null
   }
-
   return (
     <div className={`bg-neutral-700 rounded-lg overflow-hidden shadow transition-all hover:shadow-lg ${
       isTarget ? 'ring-2 ring-nomo-500' : ''
