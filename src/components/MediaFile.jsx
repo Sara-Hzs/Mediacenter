@@ -38,6 +38,7 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
     const extension = fileName.split('.').pop().toLowerCase()
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) return 'image'
     if (['mp4', 'webm', 'mov', 'avi'].includes(extension)) return 'video'
+    if (extension === 'link') return 'externalLink'
     if (extension === 'pdf') return 'pdf'
     return 'document'
   }
@@ -125,16 +126,31 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
   // Handle file click
   const handleFileClick = async () => {
     if (fileType === 'image') {
-      // Toggle expand for images
       setExpanded(!expanded);
-    } else {
-      // For all other file types, launch external application
-      await nomo.launchUrl({
-        url: `https://mediacenter.nomo.zone/${filePath}`,
-        launchMode: 'externalApplication'
-      });
+      return;
     }
+
+    if (fileType === 'externalLink') {
+      try {
+        const response = await fetch(filePath);
+        const link = await response.text();
+        await nomo.launchUrl({
+          url: link.trim(),
+          launchMode: 'externalApplication'
+        });
+      } catch (err) {
+        console.error("Failed to open .link file:", err);
+      }
+      return;
+    }
+
+    // Default behavior for other types
+    await nomo.launchUrl({
+      url: `https://mediacenter.nomo.zone/${filePath}`,
+      launchMode: 'externalApplication'
+    });
   };
+
 
   return (
     <div
