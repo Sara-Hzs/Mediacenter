@@ -159,6 +159,7 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
             </div>
           )}
 
+
           <div className="ml-2 flex-1 min-w-0 flex items-center">
             <h3 className="text-base font-medium text-white break-words hyphens-auto w-full">
               {isDesktop
