@@ -11,7 +11,7 @@
     "bump": "nomo-webon-cli bumpVersion ./public/nomo_manifest.json",
     "deploy": "npm run bump && npm run build && nomo-webon-cli deploy dist production",
     "format": "prettier --write .",
-    "get-files": "scp -r root@157.180.29.50:/var/www/html/googleDriveFiles/* ./public/googleDriveFiles"
+    "get-files": "scp -r root@157.180.29.50:/var/www/html/googleDriveFiles/* ./public/files"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",

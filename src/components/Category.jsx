@@ -48,11 +48,16 @@ function Category({ category, selectedLanguage, targetFileHash }) {
     return false
   }
 
-  // Filter files based on selected language
+// Filter files based on selected language
   const getLanguageFilteredFiles = (filesList) => {
     if (!filesList || !Array.isArray(filesList)) return []
 
-    // Just filter by the selected language - show only files with matching languageCode
+    // If "all" is selected, return all files
+    if (selectedLanguage === 'all') {
+      return filesList;
+    }
+
+    // Otherwise filter by the selected language
     return filesList.filter(file => file.languageCode === selectedLanguage);
   }
 

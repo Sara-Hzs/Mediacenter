@@ -35,7 +35,7 @@ function MediaFile({ file, isTarget }) {
       // Extract the file extension from fullFileName
       const extension = file.fullFileName.split('.').pop().toLowerCase();
       // Files are stored directly in the googleDriveFiles directory with their hash as the filename + appropriate extension
-      return `/googleDriveFiles/${file.hash}.${extension}`
+      return `/files/${file.hash}.${extension}`
     }
 
     // Fallback to the old path structure if hash is not available

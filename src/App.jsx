@@ -7,7 +7,7 @@ function App() {
   const [categoriesData, setCategoriesData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [selectedLanguage, setSelectedLanguage] = useState('en') // Default to English
+  const [selectedLanguage, setSelectedLanguage] = useState('all') // Default to All Languages
   const [availableLanguages, setAvailableLanguages] = useState([
     { code: 'en', name: 'English' }
   ])
@@ -20,7 +20,7 @@ function App() {
       setTargetFileHash(fileHash)
     }
     // Fetch the metadata.json from googleDriveFiles instead of media.json
-    const fetchMedia = fetch('/googleDriveFiles/metadata.json')
+    const fetchMedia = fetch('/files/metadata.json')
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch metadata')
@@ -83,14 +83,20 @@ function App() {
             }
           })
 
-          // Sort languages with English first, then alphabetically by name
+          // First sort languages with English first, then alphabetically by name
           languages.sort((a, b) => {
             if (a.code === 'en') return -1;
             if (b.code === 'en') return 1;
             return a.name.localeCompare(b.name);
           });
 
-          setAvailableLanguages(languages)
+// Then add "All" as the very first option (after sorting is complete)
+          languages.unshift({
+            code: 'all',
+            name: 'All Languages'
+          });
+
+          setAvailableLanguages(languages);
         }
 
         setLoading(false)
