@@ -65,16 +65,23 @@ function Category({ category, selectedLanguage, targetFileHash }) {
   const processSubfolders = (subfolders) => {
     if (!subfolders || !Array.isArray(subfolders)) return []
 
-    return subfolders.map(subfolder => {
-      const processedSubfolders = processSubfolders(subfolder.subfolders)
-      const filteredFiles = getLanguageFilteredFiles(subfolder.files)
+    return subfolders
+      .map(subfolder => {
+        const processedSubfolders = processSubfolders(subfolder.subfolders)
+        const filteredFiles = getLanguageFilteredFiles(subfolder.files)
 
-      return {
-        ...subfolder,
-        subfolders: processedSubfolders,
-        filteredFiles: filteredFiles
-      }
-    })
+        return {
+          ...subfolder,
+          subfolders: processedSubfolders,
+          filteredFiles: filteredFiles
+        }
+      })
+      // Filter out empty subfolders (no files and no non-empty subfolders)
+      .filter(subfolder => {
+        const hasFiles = subfolder.filteredFiles && subfolder.filteredFiles.length > 0;
+        const hasSubfolders = subfolder.subfolders && subfolder.subfolders.length > 0;
+        return hasFiles || hasSubfolders;
+      });
   }
 
   const categoryFiles = getLanguageFilteredFiles(category.files)
@@ -95,6 +102,10 @@ function Category({ category, selectedLanguage, targetFileHash }) {
   const totalFileCount = categoryFiles.length +
     processedSubfolders.reduce((total, subfolder) => total + countTotalFiles(subfolder), 0)
 
+  // If the category has no files in the selected language, don't render it
+  if (totalFileCount === 0) {
+    return null;
+  }
   // Get icon based on category
   const getCategoryIcon = () => {
     if (category.icon) {

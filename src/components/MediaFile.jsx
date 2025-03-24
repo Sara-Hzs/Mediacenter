@@ -184,9 +184,15 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
 
           <div className="ml-2 flex-1 min-w-0 flex items-center">
             <h3 className="text-base font-medium text-white break-words hyphens-auto w-full">
-              {isDesktop
-                ? (displayName.length > 40 ? displayName.substring(0, 40) + "..." : displayName)
-                : (displayName.length > 20 ? displayName.substring(0, 20) + "..." : displayName)
+              {selectedLanguage !== 'all'
+                ? (isDesktop
+                    ? (displayName.length > 60 ? displayName.substring(0, 60) + "..." : displayName)
+                    : (displayName.length > 28 ? displayName.substring(0, 28) + "..." : displayName)
+                )
+                : (isDesktop
+                    ? (displayName.length > 40 ? displayName.substring(0, 40) + "..." : displayName)
+                    : (displayName.length > 22 ? displayName.substring(0, 22) + "..." : displayName)
+                )
               }
             </h3>
           </div>
