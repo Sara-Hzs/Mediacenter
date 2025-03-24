@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import Home from './pages/Home'
+import { nomo } from 'nomo-webon-kit'
 
 function App() {
   const [mediaData, setMediaData] = useState(null)
@@ -49,9 +50,19 @@ function App() {
         return { categories: [] }
       })
 
+    const fetchUserLanguage = nomo.getLanguage()
+      .then(langData => {
+        console.log('User language detected:', langData.language)
+        return langData.language
+      })
+      .catch(err => {
+        console.warn('Could not get user language, defaulting to "all":', err)
+        return 'all' // Fallback to "all" in case of any errors
+      })
+
     // Wait for both fetches to complete
-    Promise.all([fetchMedia, fetchCategories])
-      .then(([mediaData, categoriesData]) => {
+    Promise.all([fetchMedia, fetchCategories, fetchUserLanguage])
+      .then(([mediaData, categoriesData, userLanguage]) => {
         setMediaData(mediaData)
         setCategoriesData(categoriesData)
 
@@ -97,6 +108,19 @@ function App() {
           });
 
           setAvailableLanguages(languages);
+
+          // Check if the user's language is in our available languages or if 2-letter code matches
+          const userLangCode = userLanguage.slice(0, 2).toLowerCase();
+          const matchingLanguage = languages.find(lang =>
+            lang.code === userLanguage || lang.code === userLangCode
+          );
+
+// Set the selected language to user's language if it's available, otherwise keep "all"
+          if (matchingLanguage) {
+            setSelectedLanguage(matchingLanguage.code);
+          } else {
+            console.log(`User language "${userLanguage}" not available in content, using "all"`);
+          }
         }
 
         setLoading(false)

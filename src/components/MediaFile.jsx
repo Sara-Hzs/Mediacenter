@@ -94,6 +94,12 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
         )
+      case 'externalLink':
+        return (
+          <svg className="w-8 h-8 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        )
       default:
         return (
           <svg className="w-8 h-8 text-nomo-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,11 +191,15 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
             </h3>
           </div>
 
-          {/* Download icon positioned to the right */}
+          {/* Download or external link icon positioned to the right */}
           <div className="ml-2 flex-shrink-0">
             {fileType === 'pdf' || fileType === 'document' || fileType === 'video' ? (
               <svg className="w-5 h-5 text-nomo-500 hover:text-nomo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              </svg>
+            ) : fileType === 'externalLink' ? (
+              <svg className="w-5 h-5 text-nomo-500 hover:text-nomo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
               </svg>
             ) : null}
           </div>
