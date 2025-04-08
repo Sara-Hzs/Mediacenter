@@ -24,6 +24,11 @@
       "id": "COPPER",
       "name": "COPPER",
       "icon": "icons/copper.png"
+    },
+    {
+      "id": "INFOBASE",
+      "name": "INFOBASE",
+      "icon": "icons/infobase.png"
     }
   ]
 }

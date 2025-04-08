@@ -113,7 +113,7 @@ function Category({ category, selectedLanguage, targetFileHash }) {
         <img
           src={`/${category.icon}`}
           alt={`${category.name} icon`}
-          className="w-8 h-8 mr-3 flex-shrink-0"
+          className="w-8 h-8 mr-3 flex-shrink-0 rounded-lg"
         />
       )
     }
