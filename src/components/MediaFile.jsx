@@ -43,14 +43,23 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
     return 'document'
   }
 
-  // Get file name without language code prefix
+// Get file name without language code prefix and hide .link extension
   const getDisplayName = (fullFileName) => {
-    // Remove language code prefix if present (e.g., "en_" from "en_Instructions.pdf")
-    const nameParts = fullFileName.split('_')
+    // First process the language code prefix
+    let displayName;
+    const nameParts = fullFileName.split('_');
     if (nameParts.length > 1 && nameParts[0].length === 2) {
-      return nameParts.slice(1).join('_')
+      displayName = nameParts.slice(1).join('_');
+    } else {
+      displayName = fullFileName;
     }
-    return fullFileName
+
+    // Remove .link extension if present
+    if (displayName.toLowerCase().endsWith('.link')) {
+      return displayName.slice(0, -5); // Remove last 5 characters (".link")
+    }
+
+    return displayName;
   }
 
   // Get file path based on the new structure (hash-based in googleDriveFiles folder)
