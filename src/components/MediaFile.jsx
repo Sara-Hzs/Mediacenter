@@ -56,7 +56,7 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
 
     // Remove .link extension if present
     if (displayName.toLowerCase().endsWith('.link')) {
-      return displayName.slice(0, -5); // Remove last 5 characters (".link")
+      return displayName.slice(0, -5);
     }
 
     return displayName;
