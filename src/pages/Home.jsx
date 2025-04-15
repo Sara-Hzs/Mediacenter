@@ -39,14 +39,16 @@ function Home({
 
     if (!mediaData || !mediaData.categories || mediaData.categories.length === 0) {
       return (
-        <div className="bg-neutral-800 rounded-lg p-6">
-          <h2 className="text-xl font-bold text-nomo-500 mb-2">No Media Found</h2>
+        <div className="bg-neutral-800 rounded-lg p-6 text-center">
+          <h2 className="text-xl font-bold text-nomo-500 mb-2">New Content Incoming</h2>
+
           <p className="text-neutral-300">
-            No media categories were found. Please check the metadata.json file in the googleDriveFiles directory.
+            We couldn’t find any media at the moment. New content might be on the way — please check back later!
           </p>
         </div>
-      )
+      );
     }
+
 
     // Filter out categories with no content for the selected language
     const visibleCategories = mediaData.categories.filter(category => {
