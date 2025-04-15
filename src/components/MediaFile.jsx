@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { nomo } from 'nomo-webon-kit'
+import arabicFlag from '../assets/arabic.png'
 
 function MediaFile({ file, isTarget, selectedLanguage  }) {
   const [expanded, setExpanded] = useState(false)
@@ -15,8 +16,17 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
   }, []);
 
   const getLanguageFlag = () => {
-    // Only show language flag when language code exists
     if (!file.languageCode) return null;
+    // Special case for Arabic
+    if (file.languageCode === 'ar') {
+      return (
+        <img
+          src={arabicFlag}
+          alt="Arabic"
+          className="w-5 h-3.5 inline-block"
+        />
+      );
+    }
 
     // Map of language codes to flag emojis
     const languageFlags = {
@@ -25,6 +35,7 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
       'es': '🇪🇸',
       'fr': '🇫🇷',
       'it': '🇮🇹',
+      'ru': '🇷🇺',
     };
 
     // Get flag emoji or use language code as fallback
