@@ -16,8 +16,9 @@ function MediaFile({ file, isTarget, selectedLanguage  }) {
   }, []);
 
   const getLanguageFlag = () => {
+    // Only show language flag when language code exists
     if (!file.languageCode) return null;
-    // Special case for Arabic
+
     if (file.languageCode === 'ar') {
       return (
         <img
