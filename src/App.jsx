@@ -85,7 +85,8 @@ function App() {
               'es': 'Español',
               'fr': 'Français',
               'it': 'Italiano',
-              // Add more languages as needed
+              'ar': 'Arabic',
+              'ru': 'Russian',
             }
 
             return {
